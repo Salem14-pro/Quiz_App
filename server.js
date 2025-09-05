@@ -542,11 +542,11 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// Export the app for Vercel
+// Export the app for Vercel serverless
 module.exports = app;
 
-// Start server (only when running locally)
-if (require.main === module) {
+// Only start server when running locally (not on Vercel)
+if (process.env.NODE_ENV !== 'production' && require.main === module) {
     const PORT = process.env.PORT || 3001;
     server.listen(PORT, () => {
         console.log(`Quiz AI App server running on port ${PORT}`);

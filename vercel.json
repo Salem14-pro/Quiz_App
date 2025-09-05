@@ -2,22 +2,39 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
+      "src": "/api/generate-quiz/topic",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/generate-quiz/document", 
+      "dest": "/index.js"
     },
     {
       "src": "/socket.io/(.*)",
-      "dest": "/server.js"
+      "dest": "/index.js"
+    },
+    {
+      "src": "/(.*\\.(js|css|html|ico|png|jpg|jpeg|gif|svg|txt|pdf))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/index.js"
     }
-  ]
+  ],
+  "functions": {
+    "index.js": {
+      "maxDuration": 30
+    }
+  }
 }
