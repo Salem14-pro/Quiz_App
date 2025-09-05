@@ -2,16 +2,8 @@
   "version": 2,
   "routes": [
     {
-      "src": "/api/generate-quiz/topic",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/generate-quiz/document", 
-      "dest": "/index.js"
-    },
-    {
       "src": "/socket.io/(.*)",
-      "dest": "/index.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*\\.(js|css|html|ico|png|jpg|jpeg|gif|svg|txt|pdf))",
@@ -23,11 +15,17 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.js"
+      "dest": "/api/index.js"
     }
   ],
   "functions": {
-    "index.js": {
+    "api/index.js": {
+      "maxDuration": 30
+    },
+    "api/generate-quiz/topic.js": {
+      "maxDuration": 30
+    },
+    "api/generate-quiz/document.js": {
       "maxDuration": 30
     }
   },
