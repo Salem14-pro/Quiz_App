@@ -542,12 +542,17 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// Start server
-const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-    console.log(`Quiz AI App server running on port ${PORT}`);
-    console.log(`Open http://localhost:${PORT} to access the app`);
-});
+// Export the app for Vercel
+module.exports = app;
+
+// Start server (only when running locally)
+if (require.main === module) {
+    const PORT = process.env.PORT || 3001;
+    server.listen(PORT, () => {
+        console.log(`Quiz AI App server running on port ${PORT}`);
+        console.log(`Open http://localhost:${PORT} to access the app`);
+    });
+}
 
 // Mock data functions for testing without API key
 function generateMockQuiz(topic, questionCount, difficulty = 'intermediate') {
