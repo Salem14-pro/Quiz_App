@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "build": "echo 'Build complete'",
-    "vercel-build": "echo 'Vercel build complete'"
+    "vercel-build": "echo 'Vercel build complete'",
+    "railway-build": "echo 'Railway build complete'",
+    "fly-build": "echo 'Fly.io build complete'"
   },
   "keywords": [
     "quiz",
