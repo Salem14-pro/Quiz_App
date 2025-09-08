@@ -542,15 +542,18 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// Export the app for Vercel serverless
+// Export the app for serverless platforms (Vercel)
 module.exports = app;
 
-// Only start server when running locally (not on Vercel)
-if (process.env.NODE_ENV !== 'production' && require.main === module) {
+// Start server for Railway and other platforms
+if (require.main === module) {
     const PORT = process.env.PORT || 3001;
-    server.listen(PORT, () => {
-        console.log(`Quiz AI App server running on port ${PORT}`);
-        console.log(`Open http://localhost:${PORT} to access the app`);
+    server.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚄 Quiz AI App server running on Railway!`);
+        console.log(`📍 Port: ${PORT}`);
+        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🔑 API Key configured: ${GEMINI_API_KEY ? 'Yes ✅' : 'No ❌'}`);
+        console.log(`🚀 Server ready for connections!`);
     });
 }
 

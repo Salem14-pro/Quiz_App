@@ -1,0 +1,9 @@
+# Railway Deployment Configuration
+node_modules/
+.git/
+.gitignore
+*.md
+.env*
+.vercel*
+render.yaml
+push_to_*.sh
