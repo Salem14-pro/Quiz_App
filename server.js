@@ -257,6 +257,16 @@ function shuffleAnswers(questions) {
     });
 }
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        apiKey: GEMINI_API_KEY ? 'configured' : 'missing'
+    });
+});
+
 // Serve the main HTML file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -548,12 +558,21 @@ module.exports = app;
 // Start server for Railway and other platforms
 if (require.main === module) {
     const PORT = process.env.PORT || 3001;
+    
+    console.log(`🚄 Starting Quiz AI App...`);
+    console.log(`📍 Target Port: ${PORT}`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔑 API Key: ${GEMINI_API_KEY ? 'configured ✅' : 'missing ❌'}`);
+    
     server.listen(PORT, '0.0.0.0', () => {
         console.log(`🚄 Quiz AI App server running on Railway!`);
         console.log(`📍 Port: ${PORT}`);
         console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
         console.log(`🔑 API Key configured: ${GEMINI_API_KEY ? 'Yes ✅' : 'No ❌'}`);
         console.log(`🚀 Server ready for connections!`);
+    }).on('error', (err) => {
+        console.error('❌ Server failed to start:', err);
+        process.exit(1);
     });
 }
 

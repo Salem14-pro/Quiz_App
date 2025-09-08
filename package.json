@@ -9,7 +9,8 @@
     "build": "echo 'Build complete'",
     "vercel-build": "echo 'Vercel build complete'",
     "railway-build": "echo 'Railway build complete'",
-    "fly-build": "echo 'Fly.io build complete'"
+    "fly-build": "echo 'Fly.io build complete'",
+    "install-production": "npm install --omit=dev"
   },
   "keywords": [
     "quiz",
