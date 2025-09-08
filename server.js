@@ -267,6 +267,11 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Favicon route
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'favicon.ico'));
+});
+
 // Serve the main HTML file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -558,20 +563,42 @@ module.exports = app;
 // Start server for Railway and other platforms
 if (require.main === module) {
     const PORT = process.env.PORT || 3001;
+    const HOST = process.env.HOST || '0.0.0.0';
     
     console.log(`🚄 Starting Quiz AI App...`);
     console.log(`📍 Target Port: ${PORT}`);
+    console.log(`🔗 Host: ${HOST}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🔑 API Key: ${GEMINI_API_KEY ? 'configured ✅' : 'missing ❌'}`);
     
-    server.listen(PORT, '0.0.0.0', () => {
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (err) => {
+        console.error('❌ Uncaught Exception:', err);
+        process.exit(1);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+        process.exit(1);
+    });
+    
+    server.listen(PORT, HOST, () => {
         console.log(`🚄 Quiz AI App server running on Railway!`);
         console.log(`📍 Port: ${PORT}`);
+        console.log(`🔗 Host: ${HOST}`);
         console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
         console.log(`🔑 API Key configured: ${GEMINI_API_KEY ? 'Yes ✅' : 'No ❌'}`);
         console.log(`🚀 Server ready for connections!`);
+        console.log(`🌍 Health check: http://localhost:${PORT}/health`);
     }).on('error', (err) => {
         console.error('❌ Server failed to start:', err);
+        console.error('❌ Error details:', {
+            code: err.code,
+            errno: err.errno,
+            syscall: err.syscall,
+            address: err.address,
+            port: err.port
+        });
         process.exit(1);
     });
 }
