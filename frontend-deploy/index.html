@@ -3,17 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz AI App</title>
+    <title>ScholarQuiz - AI-Powered Exam Preparation</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    
+    // Configure Tawk.to to stay as small popup
+    Tawk_API.onLoad = function(){
+        // Ensure chat widget stays small
+        var chatContainer = document.getElementById('tawkchat-container');
+        if (chatContainer) {
+            chatContainer.style.maxWidth = '350px';
+            chatContainer.style.maxHeight = '500px';
+            chatContainer.style.position = 'fixed';
+            chatContainer.style.bottom = '20px';
+            chatContainer.style.right = '20px';
+            chatContainer.style.zIndex = '9999';
+        }
+    };
+    
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d05b6589caa6192613cc06/1j5mua198';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 </head>
 <body>
-    <!-- Landing Page -->
+    <!-- New ScholarQuiz Landing Page -->
     <div id="landing-page" class="screen active">
         <div class="container">
-            <div class="header">
-                <h1 class="logo">Quiz AI</h1>
-                <p class="subtitle">Powered by Gemini AI</p>
+            <!-- Hero Section - Students as Heroes -->
+            <div class="hero-section">
+                <div class="brand-header">
+                    <h1 class="brand-logo">ScholarQuiz</h1>
+                    <p class="brand-tagline">AI-Powered Exam Success</p>
+                </div>
+                
+                <div class="hero-content">
+                    <h2 class="main-headline">Turn Study Materials Into Exam Success</h2>
+                    <p class="sub-headline">Generate AI questions from documents and topics for objective exams</p>
+                </div>
+                
+                <!-- Call to Action Section - Moved Up -->
+                <div class="cta-section">
+                    <div class="main-actions">
+                        <button class="cta-btn primary" onclick="showExamPreparation()">
+                            <span class="cta-icon">🎯</span>
+                            <span class="cta-text">Start Exam Preparation</span>
+                            <span class="cta-arrow">→</span>
+                        </button>
+                        
+                        <button class="cta-btn secondary" onclick="showQuizSection()">
+                            <span class="cta-icon">⚡</span>
+                            <span class="cta-text">Quick Quiz Practice</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Exam Bodies Carousel -->
+                <div class="exam-carousel-section">
+                    <h3>Trusted by Students Preparing for</h3>
+                    <div class="exam-carousel">
+                        <div class="exam-slide active">
+                            <div class="exam-bodies-grid">
+                                <div class="exam-body">
+                                    <div class="exam-logo">📚</div>
+                                    <span>JAMB</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">📖</div>
+                                    <span>WAEC</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">📝</div>
+                                    <span>NECO</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">💼</div>
+                                    <span>ICAN</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-slide">
+                            <div class="exam-bodies-grid">
+                                <div class="exam-body">
+                                    <div class="exam-logo">🌍</div>
+                                    <span>SAT</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">🗣️</div>
+                                    <span>IELTS</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">🎓</div>
+                                    <span>GRE</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">📊</div>
+                                    <span>GMAT</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-slide">
+                            <div class="exam-bodies-grid">
+                                <div class="exam-body">
+                                    <div class="exam-logo">🏥</div>
+                                    <span>MDCN</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">⚖️</div>
+                                    <span>NBA</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">🔬</div>
+                                    <span>PCN</span>
+                                </div>
+                                <div class="exam-body">
+                                    <div class="exam-logo">🏗️</div>
+                                    <span>COREN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-dots">
+                        <span class="dot active" onclick="currentSlide(1)"></span>
+                        <span class="dot" onclick="currentSlide(2)"></span>
+                        <span class="dot" onclick="currentSlide(3)"></span>
+                    </div>
+                </div>
+
+                <!-- Quick Benefits -->
+                <div class="quick-benefits">
+                    <div class="benefit">
+                        <span class="benefit-icon">📚</span>
+                        <span>Turn documents into practice questions</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="benefit-icon">🤖</span>
+                        <span>AI-powered question generation</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="benefit-icon">⏱️</span>
+                        <span>Instant quiz creation</span>
+                    </div>
+                </div>
+
+                <!-- Simple Steps -->
+                <div class="simple-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <span>Upload or Enter Topic</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <span>AI Generates Questions</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <span>Practice & Excel</span>
+                    </div>
+                </div>
+
+                <!-- Authority Badge -->
+                <div class="authority-footer">
+                    <div class="badge">
+                        <span class="badge-icon">🤖</span>
+                        <span>Powered by Gemini AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Section (Previously Landing Page) -->
+    <div id="quiz-section" class="screen">
+        <div class="container">
+            <div class="back-header">
+                <button class="back-btn" onclick="showLanding()">← Back to Home</button>
+                <h2>Quiz Practice</h2>
+            </div>
+            
+            <div class="quiz-intro">
+                <h3>Quick Quiz Practice</h3>
+                <p>Jump straight into quiz practice with instant AI-generated questions</p>
             </div>
             
             <div class="menu-options">
@@ -28,6 +210,132 @@
                     <span class="text">Multiplayer</span>
                     <span class="desc">Play with friends</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Preparation Section -->
+    <div id="exam-preparation" class="screen">
+        <div class="container">
+            <div class="back-header">
+                <button class="back-btn" onclick="showLanding()">← Back to Home</button>
+                <h2>Exam Preparation</h2>
+            </div>
+            
+            <div class="exam-intro">
+                <h3>Comprehensive Exam Preparation</h3>
+                <p>Transform your study materials into effective practice tests for objective exams</p>
+            </div>
+            
+            <div class="quiz-setup">
+                <div class="setup-tabs">
+                    <button class="tab-btn active" onclick="switchExamTab('topic')">Topic-based</button>
+                    <button class="tab-btn" onclick="switchExamTab('document')">Document-based</button>
+                </div>
+                
+                <div id="exam-topic-setup" class="setup-content active">
+                    <div class="input-group">
+                        <label for="exam-topic-input">Enter your exam topic</label>
+                        <input type="text" id="exam-topic-input" placeholder="e.g., Organic Chemistry, World History, Data Structures...">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-difficulty-level">Difficulty Level</label>
+                        <select id="exam-difficulty-level">
+                            <option value="beginner">🌱 Beginner - Foundation concepts</option>
+                            <option value="intermediate" selected>🎯 Intermediate - Standard exam level</option>
+                            <option value="advanced">🔥 Advanced - Comprehensive knowledge</option>
+                            <option value="expert">💎 Expert - Professional/Graduate level</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-question-count">Number of questions</label>
+                        <select id="exam-question-count">
+                            <option value="10">10 questions</option>
+                            <option value="15">15 questions</option>
+                            <option value="20" selected>20 questions</option>
+                            <option value="25">25 questions</option>
+                            <option value="30">30 questions</option>
+                            <option value="50">50 questions</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-time-limit">Time Limit</label>
+                        <select id="exam-time-limit">
+                            <option value="15">15 minutes</option>
+                            <option value="30" selected>30 minutes</option>
+                            <option value="45">45 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                    
+                    <button class="generate-btn" onclick="generateExamQuiz('topic')">
+                        <span class="btn-icon">🎯</span>
+                        <span>Generate Exam Practice</span>
+                    </button>
+                </div>
+                
+                <div id="exam-document-setup" class="setup-content">
+                    <div class="upload-area" onclick="triggerExamFileUpload()">
+                        <div class="upload-content">
+                            <div class="upload-icon">📄</div>
+                            <p class="upload-text">Upload your study document</p>
+                            <p class="upload-subtext">Supports PDF, TXT, and DOCX files</p>
+                        </div>
+                        <input type="file" id="exam-file-upload" accept=".pdf,.txt,.docx" onchange="handleExamFileUpload(event)" style="display: none;">
+                    </div>
+                    
+                    <div id="exam-file-info" class="file-info" style="display: none;">
+                        <div class="file-details">
+                            <span class="file-icon">📄</span>
+                            <span class="file-name"></span>
+                            <button class="remove-file" onclick="removeExamFile()">×</button>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-doc-difficulty">Difficulty Level</label>
+                        <select id="exam-doc-difficulty">
+                            <option value="beginner">🌱 Beginner - Basic comprehension</option>
+                            <option value="intermediate" selected>🎯 Intermediate - Standard analysis</option>
+                            <option value="advanced">🔥 Advanced - Deep understanding</option>
+                            <option value="expert">💎 Expert - Critical evaluation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-doc-questions">Number of questions</label>
+                        <select id="exam-doc-questions">
+                            <option value="10">10 questions</option>
+                            <option value="15">15 questions</option>
+                            <option value="20" selected>20 questions</option>
+                            <option value="25">25 questions</option>
+                            <option value="30">30 questions</option>
+                            <option value="50">50 questions</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="exam-doc-time">Time Limit</label>
+                        <select id="exam-doc-time">
+                            <option value="15">15 minutes</option>
+                            <option value="30" selected>30 minutes</option>
+                            <option value="45">45 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                    
+                    <button class="generate-btn" onclick="generateExamQuiz('document')" id="exam-doc-generate-btn" disabled>
+                        <span class="btn-icon">🎯</span>
+                        <span>Generate Exam Practice</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

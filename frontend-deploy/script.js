@@ -1,5 +1,5 @@
-// Quiz AI App - Main JavaScript File
-// Handles all game logic, Gemini API calls, and multiplayer functionality
+// ScholarQuiz - AI-Powered Exam Preparation
+// Handles all quiz logic, Gemini API calls, and multiplayer functionality
 
 // Configuration - Update this URL after deploying the backend
 const API_BASE_URL = 'https://quizapp-production-6139.up.railway.app'; // Replace with your deployed backend URL
@@ -645,11 +645,61 @@ class QuizApp {
 // Initialize the app
 const quizApp = new QuizApp();
 
+// Carousel functionality
+let slideIndex = 1;
+
+function currentSlide(n) {
+    showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+    let slides = document.getElementsByClassName("exam-slide");
+    let dots = document.getElementsByClassName("dot");
+    
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+    }
+    
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove("active");
+    }
+    
+    if (slides[slideIndex-1]) {
+        slides[slideIndex-1].classList.add("active");
+    }
+    if (dots[slideIndex-1]) {
+        dots[slideIndex-1].classList.add("active");
+    }
+}
+
+// Auto-play carousel
+function autoSlide() {
+    slideIndex++;
+    showSlides(slideIndex);
+    setTimeout(autoSlide, 4000); // Change slide every 4 seconds
+}
+
+// Start auto-play when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(autoSlide, 4000);
+});
+
 // Global functions for HTML onclick handlers
 function showLanding() {
     quizApp.showScreen('landing-page');
     quizApp.isMultiplayer = false;
     quizApp.isHost = false;
+}
+
+function showQuizSection() {
+    quizApp.showScreen('quiz-section');
+}
+
+function showExamPreparation() {
+    quizApp.showScreen('exam-preparation');
 }
 
 function showInstantPlay() {
@@ -676,6 +726,68 @@ function switchTab(tabName) {
     // Add active class to selected tab and content
     event.target.classList.add('active');
     document.getElementById(`${tabName}-setup`).classList.add('active');
+}
+
+function switchExamTab(tabName) {
+    // Remove active class from all tabs and content
+    document.querySelectorAll('#exam-preparation .tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('#exam-preparation .setup-content').forEach(content => content.classList.remove('active'));
+    
+    // Add active class to selected tab and content
+    event.target.classList.add('active');
+    document.getElementById(`exam-${tabName}-setup`).classList.add('active');
+}
+
+// Exam preparation functions
+function triggerExamFileUpload() {
+    document.getElementById('exam-file-upload').click();
+}
+
+function handleExamFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        document.getElementById('exam-file-info').style.display = 'block';
+        document.querySelector('#exam-file-info .file-name').textContent = file.name;
+        document.getElementById('exam-doc-generate-btn').disabled = false;
+    }
+}
+
+function removeExamFile() {
+    document.getElementById('exam-file-upload').value = '';
+    document.getElementById('exam-file-info').style.display = 'none';
+    document.getElementById('exam-doc-generate-btn').disabled = true;
+}
+
+function generateExamQuiz(type) {
+    if (type === 'topic') {
+        const topic = document.getElementById('exam-topic-input').value.trim();
+        const difficulty = document.getElementById('exam-difficulty-level').value;
+        const questionCount = document.getElementById('exam-question-count').value;
+        const timeLimit = document.getElementById('exam-time-limit').value;
+        
+        if (!topic) {
+            alert('Please enter an exam topic');
+            return;
+        }
+        
+        // Set quiz parameters and generate
+        quizApp.timeLimit = parseInt(timeLimit) * 60; // Convert minutes to seconds
+        quizApp.generateQuestions(topic, difficulty, questionCount);
+    } else if (type === 'document') {
+        const file = document.getElementById('exam-file-upload').files[0];
+        const difficulty = document.getElementById('exam-doc-difficulty').value;
+        const questionCount = document.getElementById('exam-doc-questions').value;
+        const timeLimit = document.getElementById('exam-doc-time').value;
+        
+        if (!file) {
+            alert('Please upload a document');
+            return;
+        }
+        
+        // Set quiz parameters and generate from document
+        quizApp.timeLimit = parseInt(timeLimit) * 60; // Convert minutes to seconds
+        quizApp.generateQuestionsFromFile(file, difficulty, questionCount);
+    }
 }
 
 function switchHostTab(tabName) {
