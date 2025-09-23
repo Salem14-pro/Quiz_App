@@ -1787,6 +1787,62 @@ select:focus {
     font-size: 1.1rem;
 }
 
+/* Connection Status Indicator */
+.connection-status {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-light);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #fbbf24;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.connecting {
+    background-color: #fbbf24;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+    background-color: #10b981;
+    animation: none;
+}
+
+.status-dot.disconnected {
+    background-color: #ef4444;
+    animation: none;
+}
+
+.status-text {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Disabled button styles */
+.multiplayer-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* Container adjustments for new sections */
 #landing-page .container {
     max-width: 1000px;

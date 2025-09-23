@@ -205,7 +205,7 @@
                     <span class="desc">Start playing immediately</span>
                 </button>
                 
-                <button class="menu-btn secondary" onclick="showMultiplayer()">
+                <button class="menu-btn secondary multiplayer-btn" onclick="showMultiplayer()">
                     <span class="icon">👥</span>
                     <span class="text">Multiplayer</span>
                     <span class="desc">Play with friends</span>
@@ -464,14 +464,22 @@
                 <h2>Multiplayer</h2>
             </div>
             
+            <!-- Connection Status -->
+            <div class="connection-status" id="connection-status">
+                <div class="status-indicator" id="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting to server...</span>
+                </div>
+            </div>
+            
             <div class="multiplayer-options">
-                <button class="multiplayer-btn host" onclick="showHostSetup()">
+                <button class="multiplayer-btn host" onclick="showHostSetup()" id="host-btn" disabled>
                     <span class="icon">🎯</span>
                     <span class="text">Host a Quiz</span>
                     <span class="desc">Create a quiz room for others to join</span>
                 </button>
                 
-                <button class="multiplayer-btn join" onclick="showJoinSetup()">
+                <button class="multiplayer-btn join" onclick="showJoinSetup()" id="join-btn" disabled>
                     <span class="icon">🔗</span>
                     <span class="text">Join a Quiz</span>
                     <span class="desc">Enter a PIN to join an existing quiz</span>
@@ -711,7 +719,7 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -26,6 +26,10 @@ class QuizApp {
     }
     
     init() {
+        // Set initial connection status
+        this.updateConnectionStatus('connecting', 'Connecting to server...');
+        this.disableMultiplayerButtons();
+        
         this.initializeSocketIO();
         this.bindEvents();
     }
@@ -33,50 +37,114 @@ class QuizApp {
     initializeSocketIO() {
         // Initialize Socket.IO connection for multiplayer
         try {
-            this.socket = io(API_BASE_URL);
+            console.log('Attempting to connect to:', API_BASE_URL);
+            this.socket = io(API_BASE_URL, {
+                transports: ['websocket', 'polling'],
+                timeout: 20000,
+                forceNew: true
+            });
             this.setupSocketEvents();
         } catch (error) {
-            console.log('Socket.IO not available - multiplayer disabled');
+            console.error('Socket.IO initialization failed:', error);
+            console.log('Multiplayer features will be disabled');
         }
     }
     
     setupSocketEvents() {
         if (!this.socket) return;
         
+        this.socket.on('connect', () => {
+            console.log('Connected to server for multiplayer');
+            this.updateConnectionStatus('connected', 'Connected to server');
+            this.enableMultiplayerButtons();
+        });
+        
+        this.socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            this.updateConnectionStatus('disconnected', 'Disconnected from server');
+            this.disableMultiplayerButtons();
+        });
+        
+        this.socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            this.updateConnectionStatus('disconnected', 'Failed to connect to server');
+            this.disableMultiplayerButtons();
+        });
+        
+        // Test connection after delay
+        setTimeout(() => {
+            if (!this.socket || !this.socket.connected) {
+                console.log('Connection timeout - server may not be running');
+                this.updateConnectionStatus('disconnected', 'Server not available');
+                this.disableMultiplayerButtons();
+            }
+        }, 5000);
+        
         this.socket.on('roomCreated', (data) => {
+            console.log('Room created:', data);
             this.roomPin = data.pin;
             this.isHost = true;
             this.showWaitingRoom();
         });
         
         this.socket.on('joinedRoom', (data) => {
+            console.log('Joined room:', data);
             this.roomPin = data.pin;
             this.players = data.players;
             this.showWaitingRoom();
         });
         
         this.socket.on('playerJoined', (data) => {
+            console.log('Player joined:', data);
             this.players = data.players;
             this.updatePlayersList();
         });
         
         this.socket.on('playerLeft', (data) => {
+            console.log('Player left:', data);
             this.players = data.players;
             this.updatePlayersList();
         });
         
         this.socket.on('quizStarted', (data) => {
+            console.log('Quiz started:', data);
             this.questions = data.questions;
             this.timeLimit = data.timeLimit || 0;
             this.startQuizGame();
         });
         
         this.socket.on('quizResults', (data) => {
+            console.log('Quiz results:', data);
             this.showMultiplayerResults(data.results);
         });
         
         this.socket.on('error', (error) => {
-            alert(error.message);
+            console.error('Socket error:', error);
+            alert('Multiplayer error: ' + error.message);
+        });
+    }
+    
+    updateConnectionStatus(status, message) {
+        const statusDot = document.querySelector('.status-dot');
+        const statusText = document.querySelector('.status-text');
+        
+        if (statusDot && statusText) {
+            statusDot.className = `status-dot ${status}`;
+            statusText.textContent = message;
+        }
+    }
+    
+    enableMultiplayerButtons() {
+        const multiplayerButtons = document.querySelectorAll('.multiplayer-btn');
+        multiplayerButtons.forEach(button => {
+            button.disabled = false;
+        });
+    }
+    
+    disableMultiplayerButtons() {
+        const multiplayerButtons = document.querySelectorAll('.multiplayer-btn');
+        multiplayerButtons.forEach(button => {
+            button.disabled = true;
         });
     }
     
@@ -527,6 +595,11 @@ class QuizApp {
     
     // Multiplayer Functions
     async createHostRoom() {
+        if (!this.socket || !this.socket.connected) {
+            alert('Unable to connect to multiplayer server. Please check your internet connection and try again.');
+            return;
+        }
+        
         const topic = document.getElementById('host-topic-input').value.trim();
         const questionCount = parseInt(document.getElementById('host-question-count').value);
         const difficulty = document.getElementById('host-difficulty-level').value;
@@ -539,13 +612,19 @@ class QuizApp {
         
         this.showLoading('Creating room and generating questions...');
         
-        const questions = await this.generateQuizFromTopic(topic, questionCount, difficulty);
-        if (questions && this.socket) {
-            this.isMultiplayer = true;
-            this.questions = questions;
-            this.timeLimit = timeLimit;
-            this.socket.emit('createRoom', { questions, timeLimit });
-        } else {
+        try {
+            const questions = await this.generateQuizFromTopic(topic, questionCount, difficulty);
+            if (questions && this.socket && this.socket.connected) {
+                this.isMultiplayer = true;
+                this.questions = questions;
+                this.timeLimit = timeLimit;
+                this.socket.emit('createRoom', { questions, timeLimit });
+            } else {
+                throw new Error('Failed to generate questions or lost connection');
+            }
+        } catch (error) {
+            console.error('Error creating host room:', error);
+            alert('Failed to create multiplayer room. Please try again.');
             this.showScreen('host-setup');
         }
     }
@@ -589,14 +668,20 @@ class QuizApp {
             return;
         }
         
-        if (!this.socket) {
-            alert('Multiplayer not available - please check your connection');
+        if (!this.socket || !this.socket.connected) {
+            alert('Unable to connect to multiplayer server. Please check your internet connection and try again.');
             return;
         }
         
         this.isMultiplayer = true;
         this.playerName = name;
-        this.socket.emit('joinRoom', { pin, name });
+        
+        try {
+            this.socket.emit('joinRoom', { pin, name });
+        } catch (error) {
+            console.error('Error joining room:', error);
+            alert('Failed to join room. Please check the PIN and try again.');
+        }
     }
     
     showWaitingRoom() {
