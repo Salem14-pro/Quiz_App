@@ -157,38 +157,61 @@ async function generateQuizFromDocument(fileContent, questionCount, difficulty =
         console.log('Using mock data for document quiz generation - configure a valid Gemini API key for real functionality');
         return generateMockDocumentQuiz(fileContent, questionCount, difficulty);
     }
+
+    // Analyze document structure and extract sections
+    const documentAnalysis = analyzeDocumentStructure(fileContent);
     
     const difficultyPrompts = {
-        beginner: "Create BEGINNER level questions focusing on basic facts, main ideas, and simple comprehension from the document. Use clear, straightforward questions.",
-        intermediate: "Create INTERMEDIATE level questions requiring understanding, analysis, and connection of ideas from the document. Include some inferential thinking.",
-        advanced: "Create ADVANCED level questions requiring deep analysis, synthesis of information, and critical evaluation of the document content.",
-        expert: "Create EXPERT level questions that require sophisticated analysis, critical thinking, synthesis across concepts, and advanced interpretation of the document."
+        beginner: "Create BEGINNER level questions focusing on basic facts, main ideas, and simple comprehension from each specific section. Use clear, straightforward questions.",
+        intermediate: "Create INTERMEDIATE level questions requiring understanding, analysis, and connection of ideas from specific sections. Include some inferential thinking.",
+        advanced: "Create ADVANCED level questions requiring deep analysis, synthesis of information, and critical evaluation from different parts of the document.",
+        expert: "Create EXPERT level questions that require sophisticated analysis, critical thinking, synthesis across concepts, and advanced interpretation from various document sections."
     };
     
-    const prompt = `Based on the following document content, generate ${questionCount} multiple-choice quiz questions.
-    
+    const prompt = `Analyze this document and create ${questionCount} multiple-choice quiz questions that cover DIFFERENT SECTIONS and topics within the document.
+
+    DOCUMENT ANALYSIS REQUIREMENTS:
+    1. **SECTION-BASED QUESTIONS**: Identify different sections, chapters, topics, or themes in the document
+    2. **DIVERSE COVERAGE**: Ensure questions cover various parts - don't focus on just one area
+    3. **SPECIFIC CONTENT**: Ask about actual content from each section, not generic document questions
+    4. **AVOID GENERIC QUESTIONS**: Don't ask "What is this document about?" or "Who wrote this?"
+    5. **TARGET SPECIFIC DETAILS**: Focus on facts, concepts, examples, and ideas from different sections
+
     DIFFICULTY LEVEL: ${difficultyPrompts[difficulty]}
-    
+
+    SECTION DISTRIBUTION STRATEGY:
+    - If the document has clear sections/chapters: Create questions from each major section
+    - If it's a continuous text: Break into beginning, middle, end portions and create questions from each
+    - For complex documents: Focus on different topics, concepts, or themes mentioned
+    - Ensure NO TWO QUESTIONS come from the exact same paragraph or section
+
+    QUESTION QUALITY REQUIREMENTS:
+    - Test comprehension of SPECIFIC content, not document structure
+    - Ask about facts, details, examples, and concepts from different parts
+    - Use in-depth analysis of the actual subject matter
+    - Create questions that show someone actually read and understood each section
+    - Avoid meta-questions about the document itself
+
     CREATIVITY REQUIREMENTS:
-    - Create engaging questions that test real understanding, not just memorization
-    - Use scenarios and applications based on the document content
+    - Create engaging questions that test real understanding of each section's content
+    - Use scenarios and applications based on specific content from different parts
     - Include creative distractors that are plausible but clearly wrong
-    - Vary question types: comprehension, analysis, inference, application, evaluation
-    - Make questions that would help someone truly understand the material
-    - Use real-world connections where the document content applies
+    - Vary question types: comprehension, analysis, inference, application from different sections
     - Keep answer options CONCISE (maximum 5-7 words each)
-    - Use short phrases instead of full sentences for options
-    
+
     Each question should have exactly 4 answer options (A, B, C, D) with only one correct answer.
     CRITICAL: Distribute correct answers randomly across ALL options (A, B, C, D). Avoid patterns.
     Ensure roughly equal distribution: 25% A, 25% B, 25% C, 25% D across all questions.
-    Focus on the key concepts, facts, and important information from the document.
-    Make the incorrect options educational and creative - they should relate to the content but be clearly wrong.
     IMPORTANT: Keep all answer options SHORT and CONCISE (5-7 words maximum).
-    
+
     Document content:
     ${fileContent}
-    
+
+    ${documentAnalysis.sections.length > 1 ? 
+        `\nIDENTIFIED SECTIONS: Create questions covering these different areas:
+        ${documentAnalysis.sections.map((section, index) => `${index + 1}. ${section.title} (${section.wordCount} words)`).join('\n        ')}` : 
+        `\nDIVERSE TOPICS: Ensure questions cover different topics and themes throughout the document.`}
+
     Format the response as a JSON array with this structure:
     [
         {
@@ -199,7 +222,8 @@ async function generateQuizFromDocument(fileContent, questionCount, difficulty =
                 "C": "Creative option C text",
                 "D": "Creative option D text"
             },
-            "correct": "A"
+            "correct": "A",
+            "section": "Section/Topic this question covers"
         }
     ]`;
     
@@ -227,10 +251,16 @@ async function generateQuizFromDocument(fileContent, questionCount, difficulty =
         const data = await response.json();
         const text = data.candidates[0].content.parts[0].text;
         
+        console.log(`📚 Document Analysis: Found ${documentAnalysis.sections.length} sections`);
+        documentAnalysis.sections.forEach((section, index) => {
+            console.log(`   ${index + 1}. ${section.title} (${section.wordCount} words)`);
+        });
+        
         // Extract JSON from the response
         const jsonMatch = text.match(/\[[\s\S]*\]/);
         if (jsonMatch) {
             const questions = JSON.parse(jsonMatch[0]);
+            console.log(`✅ Generated ${questions.length} questions from different document sections`);
             return shuffleAnswers(questions);
         } else {
             throw new Error('Invalid response format from Gemini API');
@@ -241,6 +271,106 @@ async function generateQuizFromDocument(fileContent, questionCount, difficulty =
         // Fallback to mock data if API fails
         return generateMockDocumentQuiz(fileContent, questionCount, difficulty);
     }
+}
+
+// Analyze document structure to identify sections and topics
+function analyzeDocumentStructure(content) {
+    const lines = content.split('\n').filter(line => line.trim().length > 0);
+    const sections = [];
+    
+    // Look for section indicators (headers, chapters, numbered sections, etc.)
+    const sectionPatterns = [
+        /^(chapter\s+\d+|ch\s*\d+)/i,           // Chapter 1, Ch 1
+        /^(section\s+\d+|sec\s*\d+)/i,          // Section 1, Sec 1
+        /^(part\s+\d+)/i,                        // Part 1
+        /^\d+\.\s*[A-Z]/,                        // 1. Title
+        /^[A-Z][^.]{10,80}$/,                    // Potential headers (all caps or title case)
+        /^#{1,6}\s+/,                            // Markdown headers
+        /^[A-Z\s]{5,50}$/,                       // ALL CAPS headers
+        /^(introduction|preface|conclusion|summary|overview|background)/i, // Common sections
+        /^(abstract|methodology|results|discussion|references|bibliography)/i
+    ];
+    
+    let currentSection = {
+        title: 'Introduction',
+        startLine: 0,
+        content: '',
+        wordCount: 0
+    };
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Check if this line is a section header
+        let isHeader = false;
+        for (const pattern of sectionPatterns) {
+            if (pattern.test(line)) {
+                isHeader = true;
+                break;
+            }
+        }
+        
+        // Also check for lines that look like headers (short, capitalized, etc.)
+        if (!isHeader && line.length < 80 && line.length > 5) {
+            const words = line.split(' ');
+            const capitalizedWords = words.filter(word => 
+                word.length > 2 && (word[0] === word[0].toUpperCase() || word === word.toUpperCase())
+            );
+            
+            if (capitalizedWords.length / words.length > 0.6) {
+                isHeader = true;
+            }
+        }
+        
+        if (isHeader && currentSection.content.trim().length > 100) {
+            // Save current section and start new one
+            currentSection.wordCount = currentSection.content.split(' ').length;
+            sections.push({ ...currentSection });
+            
+            currentSection = {
+                title: line.substring(0, 100), // Limit title length
+                startLine: i,
+                content: '',
+                wordCount: 0
+            };
+        } else {
+            currentSection.content += line + ' ';
+        }
+    }
+    
+    // Add the last section
+    if (currentSection.content.trim().length > 100) {
+        currentSection.wordCount = currentSection.content.split(' ').length;
+        sections.push(currentSection);
+    }
+    
+    // If no sections found, create artificial sections by splitting content
+    if (sections.length === 0) {
+        const totalWords = content.split(' ').length;
+        const wordsPerSection = Math.ceil(totalWords / 3);
+        const words = content.split(' ');
+        
+        for (let i = 0; i < 3; i++) {
+            const startIndex = i * wordsPerSection;
+            const endIndex = Math.min((i + 1) * wordsPerSection, words.length);
+            const sectionWords = words.slice(startIndex, endIndex);
+            
+            if (sectionWords.length > 50) { // Minimum section size
+                sections.push({
+                    title: `Section ${i + 1}`,
+                    startLine: 0,
+                    content: sectionWords.join(' '),
+                    wordCount: sectionWords.length
+                });
+            }
+        }
+    }
+    
+    return {
+        sections: sections,
+        totalSections: sections.length,
+        averageWordsPerSection: sections.reduce((sum, s) => sum + s.wordCount, 0) / sections.length
+    };
 }
 
 // Shuffle answer options to randomize correct answer position

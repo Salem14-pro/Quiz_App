@@ -351,7 +351,7 @@ class QuizApp {
             return;
         }
         
-        this.showLoading('Analyzing document and generating questions...');
+        this.showLoading('Analyzing document sections and creating targeted questions...');
         
         const questions = await this.generateQuizFromDocument(fileInput.files[0], questionCount, difficulty);
         

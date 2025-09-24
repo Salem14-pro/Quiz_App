@@ -1843,6 +1843,35 @@ select:focus {
     pointer-events: none;
 }
 
+/* Feature Highlight */
+.feature-highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    box-shadow: var(--shadow-light);
+}
+
+.highlight-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.highlight-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.highlight-text strong {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
 /* Container adjustments for new sections */
 #landing-page .container {
     max-width: 1000px;
