@@ -8,6 +8,7 @@
 /* Smooth Scroll Behavior */
 html {
   scroll-behavior: smooth;
+  background-color: #0F0F0F;
 }
 
 /* Intersection Observer Animations */
@@ -69,6 +70,7 @@ html {
 /* Base Typography */
 body {
   font-family: 'Cascadia Code', monospace;
+  background-color: #0F0F0F;
 }
 
 /* Adjust Cascadia Code font style in the HOW and WHY sections */
@@ -181,7 +183,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .sign-in-btn {
   background: #F0F0F0;
-  color: #0F0F0F;
+  color: #000000;
   padding: 0.6rem 1.5rem;
   border: none;
   border-radius: 999px;
