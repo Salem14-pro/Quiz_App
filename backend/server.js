@@ -17,6 +17,8 @@ const io = socketIo(server, {
         origin: [
             'http://localhost:3000',
             'http://localhost:5000',
+            'http://localhost:8000',
+            'http://localhost:8001',
             'https://your-frontend-domain.netlify.app', // Update this with your actual frontend URL
             'https://your-frontend-domain.vercel.app',  // Update this with your actual frontend URL
             /\.netlify\.app$/,
@@ -32,7 +34,7 @@ const io = socketIo(server, {
 const upload = multer({ 
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
+        fileSize: 100 * 1024 * 1024 // 100MB limit for larger documents
     }
 });
 
@@ -41,6 +43,8 @@ app.use(cors({
     origin: [
         'http://localhost:3000',
         'http://localhost:5000',
+        'http://localhost:8000',
+        'http://localhost:8001',
         'https://your-frontend-domain.netlify.app', // Update this with your actual frontend URL
         'https://your-frontend-domain.vercel.app',  // Update this with your actual frontend URL
         /\.netlify\.app$/,
@@ -446,7 +450,27 @@ app.post('/api/generate-quiz/topic', async (req, res) => {
     }
 });
 
-app.post('/api/generate-quiz/document', upload.single('document'), async (req, res) => {
+// Middleware to handle multer errors
+const handleMulterError = (err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ 
+                error: 'File too large. Please upload a file smaller than 50MB.' 
+            });
+        }
+        if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+            return res.status(400).json({ 
+                error: 'Unexpected file field. Please use the correct file input.' 
+            });
+        }
+        return res.status(400).json({ 
+            error: 'File upload error: ' + err.message 
+        });
+    }
+    next(err);
+};
+
+app.post('/api/generate-quiz/document', upload.single('document'), handleMulterError, async (req, res) => {
     try {
         const { questionCount, difficulty } = req.body;
         
