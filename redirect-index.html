@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to BRANIAC...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f0f0f;
+            color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .loader {
+            font-size: 1.2rem;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #EE247C, #FE77AA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+    </style>
+    <script>
+        // Redirect to frontend-deploy folder immediately
+        window.location.href = './frontend-deploy/';
+    </script>
+</head>
+<body>
+    <div class="loader">
+        <div class="gradient-text">BRANIAC</div>
+        <p>Loading your Quiz AI experience...</p>
+    </div>
+</body>
+</html>
