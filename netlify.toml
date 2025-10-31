@@ -1,12 +1,12 @@
 [build]
-  # Build configuration for BRANIAC + Quick Quiz Practice
+  # Build configuration for Netlify
   publish = "."
-  command = "echo 'BRANIAC + Quick Quiz Practice ready for scholarquiz.netlify.app'"
+  command = "echo 'No build required - static site'"
 
 [build.environment]
   NODE_VERSION = "18"
 
-# Redirect rules for BRANIAC + Quick Quiz Practice
+# Redirect rules for SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
