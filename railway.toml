@@ -1,0 +1,10 @@
+# Railway configuration file
+[build]
+  command = "npm install"
+
+[deploy]
+  start = "npm start"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "$PORT"
