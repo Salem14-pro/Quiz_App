@@ -54,17 +54,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-
-// Serve static files for different parts of the application
-// Serve BRANIAC Landing Page at root
-app.use('/', express.static(path.join(__dirname, '../frontend-deploy')));
-
-// Serve Quiz AI App files
-app.use('/quiz', express.static(path.join(__dirname, '..')));
-app.use('/app', express.static(path.join(__dirname, '..')));
-
-// Serve backend files (for API documentation, etc.)
-app.use('/backend', express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname)));
 
 // In-memory storage for quiz rooms
 const rooms = new Map();
@@ -421,46 +411,13 @@ function shuffleAnswers(questions) {
     });
 }
 
-// Route Handlers for Unified App
-// Landing Page - BRANIAC Design
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend-deploy/index.html'));
-});
-
-// Quiz App Routes
-app.get('/quiz', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
-});
-
-app.get('/app', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
-});
-
-// Redirect common routes to quiz app
-app.get('/quiz/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
-});
-
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ 
         status: 'OK', 
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development',
-        apiKey: GEMINI_API_KEY ? 'configured' : 'missing',
-        services: {
-            'braniac-landing': 'active',
-            'quiz-app': 'active',
-            'api-endpoints': 'active',
-            'websocket': 'active'
-        },
-        routes: {
-            'landing-page': '/',
-            'quiz-app': '/quiz',
-            'quiz-app-alt': '/app',
-            'api': '/api/*',
-            'health': '/health'
-        }
+        apiKey: GEMINI_API_KEY ? 'configured' : 'missing'
     });
 });
 
@@ -800,20 +757,13 @@ if (require.main === module) {
     });
     
     server.listen(PORT, HOST, () => {
-        console.log(`� Unified BRANIAC + Quiz AI Server Started!`);
+        console.log(`🚄 Quiz AI App server running on Railway!`);
         console.log(`📍 Port: ${PORT}`);
         console.log(`🔗 Host: ${HOST}`);
         console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
         console.log(`🔑 API Key configured: ${GEMINI_API_KEY ? 'Yes ✅' : 'No ❌'}`);
-        console.log(``);
-        console.log(`🌐 Available Routes:`);
-        console.log(`   🏠 BRANIAC Landing Page: http://localhost:${PORT}/`);
-        console.log(`   🧠 Quiz AI App: http://localhost:${PORT}/quiz`);
-        console.log(`   🎮 Quiz App (Alt): http://localhost:${PORT}/app`);
-        console.log(`   🔌 API Endpoints: http://localhost:${PORT}/api/*`);
-        console.log(`   ❤️  Health Check: http://localhost:${PORT}/health`);
-        console.log(``);
-        console.log(`🚀 Ready for deployment to any platform!`);
+        console.log(`🚀 Server ready for connections!`);
+        console.log(`🌍 Health check: http://localhost:${PORT}/health`);
     }).on('error', (err) => {
         console.error('❌ Server failed to start:', err);
         console.error('❌ Error details:', {

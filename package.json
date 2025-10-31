@@ -1,13 +1,11 @@
 {
-  "name": "unified-quiz-app",
+  "name": "frontend-deploy",
   "version": "1.0.0",
-  "description": "Unified BRANIAC Landing Page + Quiz AI App - Single port deployment ready",
-  "main": "backend/server.js",
+  "description": "This is the frontend part of the Quiz AI App. It's a static website that communicates with a separate backend API.",
+  "main": "landing-script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js",
-    "build": "echo 'No build required - static files ready'"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
