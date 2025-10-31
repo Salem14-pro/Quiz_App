@@ -79,6 +79,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .sign-in-btn {
+  font-family: 'cascadia code', monospace;
   background: #F0F0F0;
   color: #0F0F0F;
   padding: 0.6rem 1.5rem;
