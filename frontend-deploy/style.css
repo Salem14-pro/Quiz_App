@@ -8,7 +8,7 @@
 /* Smooth Scroll Behavior */
 html {
   scroll-behavior: smooth;
-  background-color: #0F0F0F;
+  background-color: #F0F0F0;
 }
 
 /* Intersection Observer Animations */
@@ -70,7 +70,7 @@ html {
 /* Base Typography */
 body {
   font-family: 'Cascadia Code', monospace;
-  background-color: #0F0F0F;
+  background-color: #F0F0F0;
 }
 
 /* Adjust Cascadia Code font style in the HOW and WHY sections */
