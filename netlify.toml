@@ -1,7 +1,7 @@
 [build]
-  # Build configuration for Netlify
+  # Build configuration for Netlify - Static site, no build needed
   publish = "frontend-deploy"
-  command = "echo 'No build required - static site'"
+  # No build command needed for static HTML site
 
 [build.environment]
   NODE_VERSION = "18"
