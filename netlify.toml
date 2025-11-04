@@ -1,6 +1,6 @@
 [build]
   # Build configuration for Netlify
-  publish = "."
+  publish = "frontend-deploy"
   command = "echo 'No build required - static site'"
 
 [build.environment]
